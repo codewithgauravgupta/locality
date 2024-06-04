@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+       /* Set the size of the div element that contains the map */
+      #map {
+        height: 500px;  /* The height is 400 pixels */
+        width: 100%;  /* The width is the width of the web page */
+       }
+    </style>
+  </head>
+  <body>
+  <div class="col-sm-12" style="background-color:red;"><h4>MPEZ-GeoPortal</h4></div>
+    <h3>EHV Substations Supplying Energy in MPPKVVCL</h3>
+	
+    <!--The div element for the map -->
+    <div id="map"></div>
+    <div id="info-box">?</div>
+    <script>
+// Initialize and add the map
+function initMap() {
+  // The location of Uluru
+  var uluru = {lat: 23.1815, lng: 79.9864};
+ 
+  // The map, centered at Uluru
+  var map = new google.maps.Map(
+      document.getElementById('map'), {zoom: 8, center: uluru});
+    map.data.loadGeoJson(
+      'ehv_substn.geoJson');
+  // Add some style.
+ 
+  map.data.setStyle(function(feature) {
+  var theaterName = feature.getProperty('SSNAME');
+  return {
+    icon: "icons8-gingerbread-house-16.png",
+    visible: true,
+    clickable: true,
+    title: theaterName
+  };
+});
+       
+
+        // Set mouseover event for each feature.
+        map.data.addListener('mouseover', function(event) {
+          document.getElementById('info-box').textContent =
+              event.feature.getProperty('SSNAME');
+        });
+  // The marker, positioned at Uluru
+  var marker = new google.maps.Marker({position: uluru, map: map});
+}
+    </script>
+    <!--Load the API from the specified URL
+    * The async attribute allows the browser to render the page while the API loads
+    * The key parameter will contain your own API key (which is not needed for this tutorial)
+    * The callback parameter executes the initMap() function
+    -->
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC5JLz10ozo1EOFX-kuVtWb6TcJUC-ULNY&callback=initMap">
+    </script>
+	<div class="col-sm-12" style="background-color:red;"><h4>MPEZ-GeoPortal</h4></div>
+  </body>
+</html>
+

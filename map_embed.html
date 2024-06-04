@@ -1,0 +1,50 @@
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>Maps Embed API</title>
+	<meta name="description" content="Integration of Maps Embed API">
+	<meta name="author" content="Educative">
+	<script>
+		function initMap() {
+			const map = new google.maps.Map(document.getElementById("map"), {
+				center: { lat: 23.8388, lng: 78.7378 },
+				zoom: 8,
+			});
+
+			// Define the marker locations
+			const markerLocations = [
+				{ lat: 24.42347, lng: 81.108087 },
+				// Add more marker locations as needed
+			];
+
+			// Add markers to the map
+			markerLocations.forEach(location => {
+				new google.maps.Marker({
+					position: location,
+					map: map,
+				});
+			});
+		}
+
+	</script>
+</head>
+
+<body>
+	<iframe width="1200" height="600" frameborder="0" style="border:0" loading="lazy" allowfullscreen
+	src="https://www.google.com/maps/embed/v1/search?q=salons+in+Sagar+MP&key=AIzaSyDMXp-2unkZGEGQveWZ4TR7sMlrOfssO1k">
+		
+	</iframe>
+</body>
+
+</html>
+<!-- 
+src="https://www.google.com/maps/embed/v1/place?q=Sagar&key=AIzaSyDMXp-2unkZGEGQveWZ4TR7sMlrOfssO1k"> 
+src="https://www.google.com/maps/embed/v1/view?center=24.42347, 81.108087&zoom=13&key=AIzaSyDMXp-2unkZGEGQveWZ4TR7sMlrOfssO1k">
+src="https://www.google.com/maps/embed/v1/directions?origin=Seattle+USA&destination=New+York+USA&waypoints=Chicago+USA|Washington+DC+USA&key=AIzaSyDMXp-2unkZGEGQveWZ4TR7sMlrOfssO1k">
+src="https://www.google.com/maps/embed/v1/streetview?location=40.689247,-74.0445025&key=AIzaSyDMXp-2unkZGEGQveWZ4TR7sMlrOfssO1k">
+src="https://www.google.com/maps/embed/v1/search?q=salons+in+Sagar+MP&key=AIzaSyDMXp-2unkZGEGQveWZ4TR7sMlrOfssO1k">
+
+-->
