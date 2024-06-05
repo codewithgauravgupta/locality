@@ -1,0 +1,185 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPEZ Sub-Stations</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <style>
+        #map {
+            height: 100%;
+        }
+
+        /* 
+ * Optional: Makes the sample page fill the window. 
+ */
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .custom-map-control-button {
+            background-color: #fff;
+            border: 0;
+            border-radius: 2px;
+            box-shadow: 0 1px 4px -1px rgba(0, 0, 0, 0.3);
+            margin: 10px;
+            padding: 0 0.5em;
+            font: 400 18px Roboto, Arial, sans-serif;
+            overflow: hidden;
+            height: 40px;
+            cursor: pointer;
+        }
+
+        .custom-map-control-button:hover {
+            background: rgb(235, 235, 235);
+        }
+    </style>
+    <script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
+    <script>
+        let map, infoWindow;
+        let SAGAR_COORDINATES = { lat: 23.8388, lng: 78.7378 };
+        function initMap() {
+            console.log("init map called!")
+
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: SAGAR_COORDINATES,
+                zoom: 10,
+                mapTypeId: "hybrid",
+                rotateControl: true,
+                scaleControl: true,
+            });
+
+            infoWindow = new google.maps.InfoWindow();
+            map.data.loadGeoJson('SUBSTATION_33.geoJson');
+            map.data.loadGeoJson('ehv_substn.geoJson');
+
+            const locationButton = document.createElement("button");
+            locationButton.textContent = "Current Location";
+            locationButton.classList.add("custom-map-control-button");
+            map.controls[google.maps.ControlPosition.TOP_CENTER].push(locationButton);
+
+            map.data.setStyle(function (feature) {
+                var theaterName = feature.getProperty('SUBSTATION');
+                var ehv = feature.getProperty('EHV_SUB_STATION');
+                var feeder = feature.getProperty('LATIDUDE');
+                var circle = feature.getProperty('CIRCLE');
+                var desription = theaterName + ehv + feeder;
+                return {
+                    icon: "OIP.png",
+                    visible: true,
+                    clickable: true,
+                    title: desription
+                };
+            });
+
+            // Set mouseover event for each feature.
+            map.data.addListener('mouseover', function (event) {
+                var ss = event.feature.getProperty('SUBSTATION');
+                var ehv = event.feature.getProperty('EHV_SUB_STATION');
+                var feeder = event.feature.getProperty('33KV FEEDER');
+                var showme = 'EHV SubStation->' + ehv.toString() + '-33 FEEDER-###' + feeder.toString() + '-33/11 KV Substation###' + ss.toString();
+                //alert(showme);
+                document.getElementById('info-box').textContent = showme;
+            });
+
+
+            locationButton.addEventListener("click", () => {
+                // Try HTML5 geolocation.
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            const pos = {
+                                lat: position.coords.latitude,
+                                lng: position.coords.longitude,
+                            };
+                            console.log(pos)
+                            infoWindow.setPosition(pos);
+                            infoWindow.setContent("Location found.");
+                            infoWindow.open(map);
+                            const newMarker = new google.maps.Marker({
+                                position: pos,
+                                map: map,
+                                title: "Marker added by user!",
+                                icon: "icons8-red-dot-48.png"
+                            });
+                            map.setCenter(pos);
+                            // findNearestMarkers(map.data, pos)
+                        },
+                        () => {
+                            handleLocationError(true, infoWindow, map.getCenter());
+                        },
+                        { enableHighAccuracy: true }
+                    );
+                } else {
+                    // Browser doesn't support Geolocation
+                    handleLocationError(false, infoWindow, map.getCenter());
+                }
+            });
+            function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+                infoWindow.setPosition(pos);
+                infoWindow.setContent(
+                    browserHasGeolocation
+                        ? "Error: The Geolocation service failed."
+                        : "Error: Your browser doesn't support geolocation.",
+                );
+                infoWindow.open(map);
+            }
+
+            // Find Nearest Markers
+            function findNearestMarkers(markers, userLocation) {
+                // Initialize variables for closest marker and distance
+                let closestMarker = null;
+                let closestDistance = Infinity;
+
+                // Loop through each marker
+                for (const marker of markers) {
+                    // Get distance between user and marker using spherical.computeDistanceBetween
+                    const distance = google.maps.geometry.spherical.computeDistanceBetween(
+                        userLocation,
+                        marker.getPosition()
+                    );
+
+                    // Update closest marker if distance is smaller
+                    if (distance < closestDistance) {
+                        closestMarker = marker;
+                        closestDistance = distance;
+                    }
+                }
+
+                // Check if a closest marker was found
+                if (closestMarker) {
+                    // Focus map on closest marker
+                    map.setCenter(closestMarker.getPosition());
+
+                    // Optionally, highlight the closest marker (you can customize highlighting logic)
+                    closestMarker.setIcon("path/to/highlight-icon.png");
+                } else {
+                    // Handle scenario where no markers are found
+                    console.warn("No markers found!");
+                }
+            }
+
+        }
+
+
+    </script>
+</head>
+
+
+<body>
+    <div id="map"></div>
+    <div id="info-box"></div>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?
+					callback=initMap&
+                    language=en&
+                    region=IN&
+					v=weekly&
+					key=AIzaSyDMXp-2unkZGEGQveWZ4TR7sMlrOfssO1k"></script>
+
+
+</body>
+
+</html>

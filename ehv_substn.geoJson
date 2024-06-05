@@ -106,4 +106,5 @@
 	{ "type": "Feature", "properties": { "SSNAME": "220 KV SATNA" }, "geometry": { "type": "Point", "coordinates": [ 80.7234, 24.5784 ] } }
 	]
 	}
+
 	
